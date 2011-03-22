@@ -135,8 +135,6 @@ public class CloudLoginScreen extends MainScreen implements FieldChangeListener 
 						BlackBerryCloud.getDispatcher().setAPIKey(getAPIKey());
 						BlackBerryCloud.getDispatcher().setUsername(getUsername());
 						requestSucceeded();
-						if(rememberField.getChecked()) 
-							save();
 					}
 					conn.close();
 				} catch (IOException ex) {
@@ -182,10 +180,16 @@ public class CloudLoginScreen extends MainScreen implements FieldChangeListener 
 	 * Pushes the Manager screen onto the window stack.
 	 */
 	public void requestSucceeded() {
+		if(this.rememberField.getChecked()) {
+			try {
+				save();
+			} catch(IOException ioex) {
+				Dialog.alert("Unable to save login information.");
+			}
+		}
 		UiApplication.getApplication().invokeLater(new Runnable() {
 			public void run() {
 				CloudManageScreen cms = new CloudManageScreen(UiApplication.getUiApplication().getActiveScreen());
-		        
 				UiApplication.getUiApplication().pushScreen(cms);
 			}
 		});
