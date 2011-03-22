@@ -52,9 +52,10 @@ public class CloudLoginScreen extends MainScreen implements FieldChangeListener 
 		usernameField = new EditField("User Name: ", "");
 		apiField = new PasswordEditField("API Key: ", "");
 		rememberField = new CheckboxField("Remember Credentials", false);
-		loginButton = new ButtonField("Login", ButtonField.CONSUME_CLICK | ButtonField.NEVER_DIRTY);
+		loginButton = new ButtonField("Login", ButtonField.CONSUME_CLICK
+				| ButtonField.NEVER_DIRTY);
 		loginButton.setChangeListener(this);
-		
+
 		loadData();
 
 		add(logoField);
@@ -73,22 +74,23 @@ public class CloudLoginScreen extends MainScreen implements FieldChangeListener 
 	 */
 	private void loadData() {
 		persistantObject = PersistentStore.getPersistentObject(KEY);
-		if (persistantObject.getContents() == null) {	
+		if (persistantObject.getContents() == null) {
 			persistantData = new Hashtable();
 			persistantObject.setContents(persistantData);
 		} else {
 			persistantData = (Hashtable) persistantObject.getContents();
 		}
 
-		if( persistantData != null ) {
+		if (persistantData != null) {
 			if (persistantData.containsKey("username")) {
 				try {
-					usernameField.setText((String) persistantData.get("username"));
+					usernameField.setText((String) persistantData
+							.get("username"));
 				} catch (IllegalArgumentException ex) {
 					usernameField.setText("");
 				}
 			}
-	
+
 			if (persistantData.containsKey("apikey")) {
 				try {
 					apiField.setText((String) persistantData.get("apikey"));
@@ -96,7 +98,7 @@ public class CloudLoginScreen extends MainScreen implements FieldChangeListener 
 					apiField.setText("");
 				}
 			}
-	
+
 			if (persistantData.containsKey("remember")) {
 				Boolean bdata = (Boolean) persistantData.get("remember");
 				rememberField.setChecked(bdata.booleanValue());
@@ -118,22 +120,24 @@ public class CloudLoginScreen extends MainScreen implements FieldChangeListener 
 	 * Starts the dispatcher to log in.
 	 */
 	protected void login() {
-		
-		Thread loginThread = new Thread(new Runnable() { 
+
+		Thread loginThread = new Thread(new Runnable() {
 			public void run() {
 				HttpsConnection conn;
 				try {
-					conn = (HttpsConnection) Connector.open("https://auth.api.rackspacecloud.com/v1.0");
+					conn = (HttpsConnection) Connector
+							.open("https://auth.api.rackspacecloud.com/v1.0");
 					conn.setRequestMethod("GET");
 					conn.setRequestProperty("X-Auth-User", getUsername());
 					conn.setRequestProperty("X-Auth-Key", getAPIKey());
 					conn.setRequestProperty("Content-Type", "application/xml");
-					
+
 					if (conn.getResponseCode() != 204) {
 						requestFailed("Invalid Username and/or Password.");
 					} else {
 						BlackBerryCloud.getDispatcher().setAPIKey(getAPIKey());
-						BlackBerryCloud.getDispatcher().setUsername(getUsername());
+						BlackBerryCloud.getDispatcher().setUsername(
+								getUsername());
 						requestSucceeded();
 					}
 					conn.close();
@@ -148,17 +152,11 @@ public class CloudLoginScreen extends MainScreen implements FieldChangeListener 
 	protected boolean onSavePrompt() {
 		return true;
 	}
-	
+
 	protected boolean onSave() {
 		return false;
 	}
 
-	/*public boolean onClose() {
-		usernameField.setDirty(false);
-		apiField.setDirty(false);
-		return true;
-	}*/
-	
 	/**
 	 * Saves the data in the fields.
 	 */
@@ -166,11 +164,13 @@ public class CloudLoginScreen extends MainScreen implements FieldChangeListener 
 		if (rememberField.getChecked() == true) {
 			persistantData.put("username", new String(usernameField.getText()));
 			persistantData.put("apikey", new String(apiField.getText()));
-			persistantData.put("remember", new Boolean(rememberField.getChecked()));
+			persistantData.put("remember", new Boolean(rememberField
+					.getChecked()));
 		} else {
 			persistantData.put("username", new String(""));
 			persistantData.put("apikey", new String(""));
-			persistantData.put("remember", new Boolean(rememberField.getChecked()));
+			persistantData.put("remember", new Boolean(rememberField
+					.getChecked()));
 		}
 		persistantObject.setContents(persistantData);
 		persistantObject.commit();
@@ -180,16 +180,15 @@ public class CloudLoginScreen extends MainScreen implements FieldChangeListener 
 	 * Pushes the Manager screen onto the window stack.
 	 */
 	public void requestSucceeded() {
-		if(this.rememberField.getChecked()) {
-			try {
-				save();
-			} catch(IOException ioex) {
-				Dialog.alert("Unable to save login information.");
-			}
+		try {
+			save();
+		} catch (IOException ioex) {
+			Dialog.alert("Unable to save login information.");
 		}
 		UiApplication.getApplication().invokeLater(new Runnable() {
 			public void run() {
-				CloudManageScreen cms = new CloudManageScreen(UiApplication.getUiApplication().getActiveScreen());
+				CloudManageScreen cms = new CloudManageScreen(UiApplication
+						.getUiApplication().getActiveScreen());
 				UiApplication.getUiApplication().pushScreen(cms);
 			}
 		});
@@ -197,7 +196,9 @@ public class CloudLoginScreen extends MainScreen implements FieldChangeListener 
 
 	/**
 	 * Displays error message.
-	 * @param message the message to display.
+	 * 
+	 * @param message
+	 *            the message to display.
 	 */
 	public void requestFailed(final String message) {
 		UiApplication.getApplication().invokeLater(new Runnable() {
@@ -209,6 +210,7 @@ public class CloudLoginScreen extends MainScreen implements FieldChangeListener 
 
 	/**
 	 * Gets the value in the user name field.
+	 * 
 	 * @return String Containing the user name.
 	 */
 	public String getUsername() {
@@ -217,6 +219,7 @@ public class CloudLoginScreen extends MainScreen implements FieldChangeListener 
 
 	/**
 	 * Gets the value in the api field.
+	 * 
 	 * @return String Containing the API key.
 	 */
 	public String getAPIKey() {
@@ -224,7 +227,8 @@ public class CloudLoginScreen extends MainScreen implements FieldChangeListener 
 	}
 
 	/**
-	 * Adds additional Menu items to the menu when the Black Berry Button is pushed.
+	 * Adds additional Menu items to the menu when the Black Berry Button is
+	 * pushed.
 	 */
 	protected void makeMenu(Menu menu, int instance) {
 		super.makeMenu(menu, instance);
@@ -232,8 +236,8 @@ public class CloudLoginScreen extends MainScreen implements FieldChangeListener 
 			public void run() {
 				try {
 					save();
-				} catch(IOException ioe) {
-					
+				} catch (IOException ioe) {
+
 				}
 			}
 		});
