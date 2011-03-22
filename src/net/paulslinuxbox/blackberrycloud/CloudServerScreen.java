@@ -108,9 +108,10 @@ public class CloudServerScreen extends MainScreen implements FieldChangeListener
 				}
 			}
 		});
-		menu.add(new MenuItem("Create Backup Image", 10, 20) {
+		menu.add(new MenuItem("Backup Schedule", 10, 20) {
 			public void run() {
-				
+				CloudBackupScreen backup = new CloudBackupScreen(serverID);
+				UiApplication.getUiApplication().pushScreen(backup);
 			}
 		});
 		menu.add(new MenuItem("Update Server", 10, 20) {
