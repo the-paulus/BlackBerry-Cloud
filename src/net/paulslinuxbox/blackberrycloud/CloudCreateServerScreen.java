@@ -12,9 +12,17 @@ import net.rim.device.api.ui.*;
 import net.rim.device.api.ui.component.*;
 import net.rim.device.api.ui.container.*;
 import net.rim.device.api.xml.jaxp.XMLWriter;
-
+/**
+ * Class for creating a screen which allows users to create cloud servers.
+ * 
+ * @author Paul Lyon <pmlyon@gmail.com>
+ *
+ */
 public class CloudCreateServerScreen extends MainScreen implements FieldChangeListener {
 	
+	/**
+	 * Constructor
+	 */
 	public CloudCreateServerScreen() {
 		this.dispatcher = BlackBerryCloud.getDispatcher();
 		setTitle("Black Berry Cloud");
@@ -49,6 +57,12 @@ public class CloudCreateServerScreen extends MainScreen implements FieldChangeLi
 		add(createButton);
 	}
 
+	/**
+	 * Invoked by a field when a property changes.
+	 * 
+	 * @param field The field that changed.
+	 * @param context Information specifying the origin of the change.
+	 */
 	public void fieldChanged(Field field, int context) {
 		
 		field.setDirty(false);
@@ -66,6 +80,10 @@ public class CloudCreateServerScreen extends MainScreen implements FieldChangeLi
 		}
 	}
 	
+	/**
+	 * Executes the Request Dispatcher that sends out the request to Rackspace indicating 
+	 * that a new cloud server should be created. 
+	 */
 	private void createServer() {
 		if(serverNameField.getText().compareTo("") == 0) {
 			Dialog.alert("Server name is required.");
@@ -111,18 +129,39 @@ public class CloudCreateServerScreen extends MainScreen implements FieldChangeLi
 		});
 	}
 	
+	/**
+	 * Invoked when the screen should prompt to save its contents. 
+	 */
 	protected boolean onSavePrompt() {
 		return true;
 	}
 	
+	/**
+	 * Invoked when the screen should save its contents.
+	 */
 	protected boolean onSave() {
 		return false;
 	}
 	
+	/**
+	 * Flavor ID of the cloud server. This is the size of the server (eg: 256MB, 512MB, etc)
+	 */
 	private String flavorId;
+	/**
+	 * Image ID of the cloud server. This is the distribution of Linux or version of Windows.
+	 */
 	private String imageId;
+	/**
+	 * Field manager that contains all the flavor options.
+	 */
 	private VerticalFieldManager flavorManager;
+	/**
+	 * Field manager that contains all the image options.
+	 */
 	private VerticalFieldManager imageManager;
+	/**
+	 * 
+	 */
 	private HttpRequestDispatcher dispatcher;
 	private BitmapField logoField;
 	private Bitmap logoBitmap;
