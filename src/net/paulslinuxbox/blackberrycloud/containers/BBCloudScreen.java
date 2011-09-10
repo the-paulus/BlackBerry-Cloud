@@ -15,7 +15,7 @@ import net.rim.device.api.ui.container.MainScreen;
 import net.rim.device.api.ui.decor.BackgroundFactory;
 
 /**
- * @author Paulus
+ * @author Paul Lyon <pmlyon@gmail.com>
  *
  */
 public class BBCloudScreen extends MainScreen {

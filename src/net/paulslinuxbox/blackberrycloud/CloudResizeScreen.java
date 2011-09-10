@@ -25,14 +25,18 @@ import net.rim.device.api.ui.container.VerticalFieldManager;
 import net.rim.device.api.xml.jaxp.XMLWriter;
 
 /**
- * @author Paulus
+ * Creates a resize screen for the user.
+ * 
+ * @author Paul Lyon <pmlyon@gmail.com>
  *
  */
 public class CloudResizeScreen extends MainScreen implements
 		FieldChangeListener {
 
 	/**
+	 * Constructor. Creates a new resize screen.
 	 * 
+	 * @param serverId Server ID as a String.
 	 */
 	public CloudResizeScreen(String serverId) {
 		this.dispatcher = BlackBerryCloud.getDispatcher();
@@ -68,8 +72,8 @@ public class CloudResizeScreen extends MainScreen implements
 		// TODO Auto-generated constructor stub
 	}
 
-	/* (non-Javadoc)
-	 * @see net.rim.device.api.ui.FieldChangeListener#fieldChanged(net.rim.device.api.ui.Field, int)
+	/**
+	 * Invoked by a field when a property changes. 
 	 */
 	public void fieldChanged(Field field, int context) {
 		field.setDirty(false);
@@ -88,6 +92,9 @@ public class CloudResizeScreen extends MainScreen implements
 		}
 	}
 	
+	/**
+	 * Starts the dispatcher and sends a request to Rackspace.
+	 */
 	private void resizeServer() {
 		try {		
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -107,13 +114,40 @@ public class CloudResizeScreen extends MainScreen implements
 		}
 	}
 	
+	/**
+	 * Flavor (server size) that the user has selected.
+	 */
 	private String flavorId;
+	/**
+	 * The server ID.
+	 */
 	private String serverId;
+	/**
+	 * Displays the radio button group that shows the flavor choices to the user.
+	 */
 	private VerticalFieldManager flavorManager;
+	/**
+	 * Dispatcher object used to make requests.
+	 */
 	private HttpRequestDispatcher dispatcher;
+	/**
+	 * Field that displays the logo.
+	 */
 	private BitmapField logoField;
+	/**
+	 * Image containing the Rackspace logo.
+	 */
 	private Bitmap logoBitmap;
+	/**
+	 * Label explaining to the user what to do.
+	 */
 	private LabelField infoLabel;
+	/**
+	 * Button group that displays the choice of server sizes or flavors.
+	 */
 	private RadioButtonGroup flavorGroup;
+	/**
+	 * Button that starts the resize operation.
+	 */
 	private ButtonField resizeButton;
 }

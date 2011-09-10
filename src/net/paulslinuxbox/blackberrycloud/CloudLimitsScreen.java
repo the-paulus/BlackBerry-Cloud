@@ -11,9 +11,17 @@ import net.rim.device.api.ui.component.Menu;
 import net.rim.device.api.ui.component.SeparatorField;
 import net.rim.device.api.ui.container.GridFieldManager;
 import net.rim.device.api.ui.container.MainScreen;
-
+/**
+ * Limit screen class that creates a new window for a user to view their accounts limits.
+ * 
+ * @author Paul Lyon <pmlyon@gmail.com>
+ *
+ */
 public class CloudLimitsScreen extends MainScreen {
 
+	/**
+	 * Constructor
+	 */
 	public CloudLimitsScreen() {
 		dispatcher = BlackBerryCloud.getDispatcher();
 		setTitle("Black Berry Cloud");
@@ -38,6 +46,9 @@ public class CloudLimitsScreen extends MainScreen {
 		refresh();
 	}
 	
+	/**
+	 * Gets the limits and updates the display to reflect any changes.
+	 */
 	private void refresh() {
 		dispatcher.setCommand(HttpRequestDispatcher.GET_LIMITS);
 		dispatcher.setScreen(this);
@@ -45,6 +56,9 @@ public class CloudLimitsScreen extends MainScreen {
 		dispatcher.run();
 	}
 	
+	/**
+	 * Override makeMenu function. Adds additional menu items to the applications menu. 
+	 */
 	protected void makeMenu(Menu menu, int instance) {
 		super.makeMenu(menu, instance);
 		menu.add(new MenuItem("Refresh", 10, 20) {
@@ -60,9 +74,24 @@ public class CloudLimitsScreen extends MainScreen {
 		});
 	}
 	
+	/**
+	 * Field manager for displaying the rate limits.
+	 */
 	private GridFieldManager rateMgr;
+	/**
+	 * Field manager for displaying absolute limits.
+	 */
 	private GridFieldManager absoluteMgr;
+	/**
+	 * Dispatcher object used to make requests.
+	 */
 	private HttpRequestDispatcher dispatcher;
+	/**
+	 * Field that displays the logo.
+	 */
 	private BitmapField logoField;
+	/**
+	 * Image containing the Rackspace logo.
+	 */
 	private Bitmap logoBitmap;
 }

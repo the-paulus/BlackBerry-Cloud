@@ -33,6 +33,7 @@ import net.rim.device.api.ui.container.MainScreen;
 import net.rim.device.api.ui.decor.BackgroundFactory;
 
 /**
+ * Creates the login screen for the user.
  * 
  * @author Paulus
  * 
@@ -149,10 +150,16 @@ public class CloudLoginScreen extends MainScreen implements FieldChangeListener 
 		loginThread.start();
 	}
 
+	/**
+	 * Invoked when the screen should prompt to save its contents. 
+	 */
 	protected boolean onSavePrompt() {
 		return true;
 	}
-
+	
+	/**
+	 * Invoked when the screen should save its contents.
+	 */
 	protected boolean onSave() {
 		return false;
 	}
@@ -254,13 +261,41 @@ public class CloudLoginScreen extends MainScreen implements FieldChangeListener 
 		});
 	}
 
-	private Bitmap logoBitmap; // 315x57
+	/**
+	 * Field that displays the logo.
+	 */
 	private BitmapField logoField;
+	/**
+	 * Image containing the Rackspace logo.
+	 */
+	private Bitmap logoBitmap;
+	/**
+	 * Field containing the user name.
+	 */
 	private EditField usernameField;
+	/**
+	 * Field containing the API key.
+	 */
 	private PasswordEditField apiField;
+	/**
+	 * Checkbox for remembering the login information.
+	 */
 	private CheckboxField rememberField;
+	/**
+	 * Button that starts the login process.
+	 */
 	private ButtonField loginButton;
+	/**
+	 * The username and API data that has survived after the application was closed.
+	 */
 	private Hashtable persistantData;
+	/**
+	 * Object that contains persistant data. Persistant data is data that survives 
+	 * after the application has closed.
+	 */
 	private PersistentObject persistantObject;
+	/**
+	 * Persistant data key. Used for retrieving data that is stored on the phone.
+	 */
 	private static final long KEY = 0x8c8c2e90b0a25aceL;
 }

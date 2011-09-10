@@ -24,14 +24,18 @@ import net.rim.device.api.ui.container.VerticalFieldManager;
 import net.rim.device.api.xml.jaxp.XMLWriter;
 
 /**
- * @author Paulus
+ * Creates a screen allowing a user to backup a cloud server.
  * 
+ * @author Paul Lyon <pmlyon@gmail.com>
+ *
  */
 public class CloudBackupScreen extends MainScreen implements
 		FieldChangeListener {
 
 	/**
+	 * Constructs a backup screen. This screen takes the server ID as it's only parameter.
 	 * 
+	 * @param ID of the server to backup.
 	 */
 	public CloudBackupScreen(String serverID) {
 		BackupChoice[] daily_choices = new BackupChoice[13];
@@ -83,13 +87,20 @@ public class CloudBackupScreen extends MainScreen implements
 	}
 
 	/**
+	 * 
 	 * @param style
 	 */
 	public CloudBackupScreen(long style) {
 		super(style);
 		// TODO Auto-generated constructor stub
 	}
-
+	
+	/**
+	 * Invoked by a field when a property changes.
+	 * 
+	 * @param field The field that changed.
+	 * @param context Information specifying the origin of the change.
+	 */
 	public void fieldChanged(Field field, int context) {
 		// TODO Auto-generated method stub
 		if (field.isDirty())
@@ -127,35 +138,88 @@ public class CloudBackupScreen extends MainScreen implements
 			}
 	}
 
+	/**
+	 * Private class used to define backup choices.
+	 * 
+	 * @author Paulus
+	 *
+	 */
 	private class BackupChoice {
+		
+		/**
+		 * Constructor of a new choice.
+		 * @param label Tells the user what choice is being presented.
+		 * @param value Value of the selected choice.
+		 */
 		public BackupChoice(String label, String value) {
 			this.label = label;
 			this.value = value;
 		}
 
+		/**
+		 * Returns the label.
+		 * @return The label.
+		 */
 		public String getLabel() {
 			return label;
 		}
 
+		/**
+		 * Returns the value of the choice.
+		 * @return The value of the choice.
+		 */
 		public String getValue() {
 			return value;
 		}
 
+		/**
+		 * Instead of returning a string representation of the object, it returns just the label.
+		 * @return The label.
+		 */
 		public String toString() {
 			return label;
 		}
 
+		/**
+		 * The value of the choice.
+		 */
 		private String value;
+		/**
+		 * The label of the choice.
+		 */
 		private String label;
 	}
 
+	/**
+	 * The button used to save the choices made on the screen.
+	 */
 	private ButtonField savebtn;
+	/**
+	 * The HttpRequestdispatcher used to send and receive data from Rackspace.
+	 */
 	private HttpRequestDispatcher dispatcher;
+	/**
+	 * Vertical Field Manager that allows scrolling of choices. 
+	 */
 	private VerticalFieldManager vmgr;
+	/**
+	 * Contains all the choices when making a selection for daily backups.
+	 */
 	private ObjectChoiceField daily;
+	/**
+	 * Contains all the choices when making a selection for weekly backups.
+	 */
 	private ObjectChoiceField weekly;
-	private HorizontalFieldManager dhmgr;
+	/**
+	 * Cloud server ID provided by Rackspace.
+	 */
 	private String serverID;
+	/**
+	 * Image containing the Rackspace logo.
+	 */
 	private Bitmap logoBitmap;
+	/**
+	 * Field that displays the logo.
+	 */
 	private BitmapField logoField;
 }

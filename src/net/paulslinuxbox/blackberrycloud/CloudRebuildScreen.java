@@ -25,13 +25,17 @@ import net.rim.device.api.ui.container.VerticalFieldManager;
 import net.rim.device.api.xml.jaxp.XMLWriter;
 
 /**
- * @author Paulus
+ * Creates the rebuild screen for the user.
+ * 
+ * @author Paul Lyon <pmlyon@gmail.com>
  *
  */
 public class CloudRebuildScreen extends MainScreen implements FieldChangeListener {
 
 	/**
+	 * Constructs a new rebuild screen.
 	 * 
+	 * @param serverId String containing the server ID that is assigned from Rackspace.
 	 */
 	public CloudRebuildScreen(String serverId) {
 		// TODO Auto-generated constructor stub
@@ -60,6 +64,9 @@ public class CloudRebuildScreen extends MainScreen implements FieldChangeListene
 		dispatcher.run();
 	}
 
+	/**
+	 * Invoked by a field when a property changes. 
+	 */
 	public void fieldChanged(Field field, int context) {
 		// TODO Auto-generated method stub
 		field.setDirty(false);
@@ -78,6 +85,9 @@ public class CloudRebuildScreen extends MainScreen implements FieldChangeListene
 		}
 	}
 
+	/**
+	 * Starts the dispatcher and sends the rebuild request to Rackspace.
+	 */
 	private void rebuildServer() {
 		try {		
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -96,14 +106,42 @@ public class CloudRebuildScreen extends MainScreen implements FieldChangeListene
 			
 		}
 	}
+	
+	/**
+	 * Image ID of the server.
+	 */
 	private String imageId;
+	/**
+	 * ID of the server that is assigned by Rackspace.
+	 */
 	private String serverId;
+	/**
+	 * Field manager that lists the choices a user has to rebuild from.
+	 */
 	private VerticalFieldManager imageManager;
+	/**
+	 * Dispatcher object used to make requests.
+	 */
 	private HttpRequestDispatcher dispatcher;
+	/**
+	 * Field that displays the logo.
+	 */
 	private BitmapField logoField;
+	/**
+	 * Image containing the Rackspace logo.
+	 */
 	private Bitmap logoBitmap;
+	/**
+	 * Label that displays basic information.
+	 */
 	private LabelField infoLabel;
+	/**
+	 * Button group that displays the image choices.
+	 */
 	private RadioButtonGroup imageGroup;
+	/**
+	 * Button that starts the rebuild process.
+	 */
 	private ButtonField rebuildButton;
 
 }

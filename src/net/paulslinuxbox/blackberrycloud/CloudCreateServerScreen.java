@@ -160,13 +160,31 @@ public class CloudCreateServerScreen extends MainScreen implements FieldChangeLi
 	 */
 	private VerticalFieldManager imageManager;
 	/**
-	 * 
+	 * Dispatcher object used to make requests.
 	 */
 	private HttpRequestDispatcher dispatcher;
+	/**
+	 * Field that displays the logo.
+	 */
 	private BitmapField logoField;
+	/**
+	 * Image containing the Rackspace logo.
+	 */
 	private Bitmap logoBitmap;
+	/**
+	 * Field that allows a user to enter the name of the server.
+	 */
 	private EditField serverNameField;
+	/**
+	 * Button group that lists server size choices.
+	 */
 	private RadioButtonGroup flavorGroup;
+	/**
+	 * Button group that displays image choices.
+	 */
 	private RadioButtonGroup imageGroup;
+	/**
+	 * The button field used to signal to the dispatcher that a server needs to be created.
+	 */
 	private ButtonField createButton;
 }

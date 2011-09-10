@@ -1,6 +1,3 @@
-/**
- * 
- */
 package net.paulslinuxbox.blackberrycloud;
 
 import net.paulslinuxbox.blackberrycloud.containers.BBCloudScreen;

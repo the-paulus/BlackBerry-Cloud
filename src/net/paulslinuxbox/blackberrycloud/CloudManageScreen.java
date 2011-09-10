@@ -21,8 +21,18 @@ import net.rim.device.api.ui.container.HorizontalFieldManager;
 import net.rim.device.api.ui.container.MainScreen;
 import net.rim.device.api.ui.container.VerticalFieldManager;
 
+/**
+ * Creates the screen where the user can select a server from a list.
+ * 
+ * @author Paulus
+ * 
+ */
 public class CloudManageScreen extends MainScreen implements FieldChangeListener {
 
+	/**
+	 * Constructs a new Manage screen.
+	 * @param old A reference to the last screen.
+	 */
 	public CloudManageScreen(Screen old) {
 		// TODO Auto-generated constructor stub
 		
@@ -41,6 +51,9 @@ public class CloudManageScreen extends MainScreen implements FieldChangeListener
 		loadServers();
 	}
 	
+	/**
+	 * Populates the screen with a list of servers associated with the curren account.
+	 */
 	private void loadServers() {
 		dispatcher.setCommand(HttpRequestDispatcher.LIST_SERVERS);
 		dispatcher.setScreen(this);
@@ -48,6 +61,9 @@ public class CloudManageScreen extends MainScreen implements FieldChangeListener
 		dispatcher.run();
 	}
 	
+	/**
+	 * Invoked by a field when a property changes. 
+	 */
 	public void fieldChanged(Field field, int context) {
 		// TODO Auto-generated method stub
 		if(field instanceof BBCloudButton) {
@@ -93,23 +109,57 @@ public class CloudManageScreen extends MainScreen implements FieldChangeListener
 		});
 	}
 	
+	/**
+	 * Sets the Hashtable in which the list of servers will be stored.
+	 * @param serverlist contains all the servers associated with the account.
+	 */
 	public void setServerList(Hashtable serverlist) {
 		this.servers = serverlist;
 	}
 	
+	/**
+	 * Gets the user name.
+	 * @return the currently logged in user name.
+	 */
 	public String getUsername() {
 		return this.username;
 	}
 	
+	/**
+	 * Gets the API key.
+	 * @return The API key.
+	 */
 	public String getAPIKey() {
 		return this.apikey;
 	}
 	
-	private Bitmap logoBitmap;
+	
+	/**
+	 * Field that displays the logo.
+	 */
 	private BitmapField logoField;
+	/**
+	 * Image containing the Rackspace logo.
+	 */
+	private Bitmap logoBitmap;
+	/**
+	 * Field manager that holds the list of servers.
+	 */
 	private VerticalFieldManager vmgr;
+	/**
+	 * Data list of servers.
+	 */
 	private Hashtable servers = null;
+	/**
+	 * Current user name.
+	 */
 	private String username;
+	/**
+	 * Current Password.
+	 */
 	private String apikey;
+	/**
+	 * Dispatcher object used to make requests.
+	 */
 	private HttpRequestDispatcher dispatcher;
 }

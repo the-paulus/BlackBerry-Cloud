@@ -23,12 +23,16 @@ import net.rim.device.api.xml.jaxp.XMLWriter;
 /**
  * Creates a screen to display information about a specific cloud server.
  * 
- * @author Paul Lyon <pmlyon@gmail.com.
+ * @author Paul Lyon <pmlyon@gmail.com>
  *
  */
 public class CloudServerScreen extends MainScreen implements FieldChangeListener {
 	
-	
+	/**
+	 * Creates a new Server Screen.
+	 * 
+	 * @param serverID ID of the server.
+	 */
 	public CloudServerScreen(String serverID) {
 		this.dispatcher = BlackBerryCloud.getDispatcher();
 		this.serverID = serverID;
@@ -48,6 +52,9 @@ public class CloudServerScreen extends MainScreen implements FieldChangeListener
 		
 	}
 	
+	/**
+	 * Updates the display.
+	 */
 	private void refresh() {
 		dispatcher.setCommand(HttpRequestDispatcher.SERVER_DETAILS);
 		dispatcher.setServerID(serverID);
@@ -190,9 +197,24 @@ public class CloudServerScreen extends MainScreen implements FieldChangeListener
 		});
 	}
 	
+	/**
+	 * Dispatcher object used to make requests.
+	 */
 	private HttpRequestDispatcher dispatcher;
+	/**
+	 * The ID of the server.
+	 */
 	private String serverID;
+	/**
+	 * Field manager used to layout information on the screen.
+	 */
 	private VerticalFieldManager vmgr;
-	private Bitmap logoBitmap;
+	/**
+	 * Field that displays the logo.
+	 */
 	private BitmapField logoField;
+	/**
+	 * Image containing the Rackspace logo.
+	 */
+	private Bitmap logoBitmap;
 }

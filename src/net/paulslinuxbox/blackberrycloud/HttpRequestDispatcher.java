@@ -91,6 +91,10 @@ public class HttpRequestDispatcher implements Runnable {
 		this.apikey = apikey;
 	}
 
+	/**
+	 * Gets the active internet connection.
+	 * @return
+	 */
 	private ServiceRecord getWAP2ServiceRecord() {
 		ServiceBook sb = ServiceBook.getSB();
 		ServiceRecord[] records = sb.getRecords();
@@ -107,7 +111,7 @@ public class HttpRequestDispatcher implements Runnable {
 	}
 	
 	/**
-	 * 
+	 * Code that is to be run in another thread.
 	 */
 	public void run() {
 		String connectionParameters = "";
@@ -123,6 +127,7 @@ public class HttpRequestDispatcher implements Runnable {
 			authenticate(this.username, this.apikey);
 		}
 		
+		// Checks to see what connection the phone is using (e.g. WiFi or Data Network)
 		if(WLANInfo.getWLANState() == WLANInfo.WLAN_STATE_CONNECTED) {
 			connectionParameters = ";interface=wifi";
 		} else {
@@ -305,6 +310,35 @@ public class HttpRequestDispatcher implements Runnable {
 					EventLogger.logEvent(BlackBerryCloud.GUID, saex.getMessage().getBytes());
 				}
 				break;
+			case SCHEDULE_BACKUP:
+				try {
+					db = dbf.newDocumentBuilder();
+	                conn = (HttpsConnection) Connector.open(this.management_url + "/servers/" + this.serverID + "/backup_schedule", Connector.READ_WRITE);
+	                conn.setRequestMethod("PUT");
+	                conn.setRequestProperty("Content-Type","text/xml");
+	                conn.setRequestProperty("X-Auth-Token", this.token);
+	                conn.setRequestProperty("Content-Length", Integer.toString(this.post_xml.length()));
+	                OutputStreamWriter os = new OutputStreamWriter(conn.openOutputStream());
+                	os.write(this.post_xml);
+	                os.flush();
+	                os.close();
+	                if (conn.getResponseCode() == 204) {
+	                	Dialog.inform("Successfully Scheduled.");
+	                	UiApplication.getUiApplication().popScreen(this.screen);
+	                } else {
+	                	parseFault(db.parse(conn.openInputStream()));
+	                }
+	                conn.close();
+				} catch(IOException ioex) {
+					EventLogger.logEvent(BlackBerryCloud.GUID, ioex.getMessage().getBytes());
+				} catch(ParserConfigurationException pex) {
+					EventLogger.logEvent(BlackBerryCloud.GUID, pex.getMessage().getBytes());
+				} catch(SAXException saex) {
+					EventLogger.logEvent(BlackBerryCloud.GUID, saex.getMessage().getBytes());
+				}
+				break;
+			case CREATE_IMAGE:
+				break;
 			case REBOOT:
 			case REBUILD:
 			case CONFIRM_RESIZE:
@@ -467,6 +501,11 @@ public class HttpRequestDispatcher implements Runnable {
 		}
 	}
 	
+	/**
+	 * Parses the XML request received when getting server information.
+	 * 
+	 * @param xml_dom Document containing XML data for a particular server.
+	 */
 	private void parseServerInfo(Document xml_dom) {
 		Element el = xml_dom.getDocumentElement();
         NodeList nodeChildList = null;
@@ -507,9 +546,13 @@ public class HttpRequestDispatcher implements Runnable {
                     }
                 }
             }
-        //}
 	}
 	
+	/**
+	 * Parses the XML response which contains a list of servers under the account.
+	 * 
+	 * @param xml_dom Document containing an XML server list.
+	 */
 	private void parseServers(Document xml_dom) {
         Element rootEl = xml_dom.getDocumentElement();
         NodeList servers = rootEl.getElementsByTagName("server");        
@@ -539,6 +582,11 @@ public class HttpRequestDispatcher implements Runnable {
         }
     }
 	
+	/**
+	 * Parses the limits XML response.
+	 * 
+	 * @param xml_dom Document containing account limits in XML format.
+	 */
 	private void parseLimits(Document xml_dom) {
 		Element rootEl = xml_dom.getDocumentElement();
         NodeList rate = rootEl.getElementsByTagName("rate");     
@@ -589,6 +637,12 @@ public class HttpRequestDispatcher implements Runnable {
         
 	}
 	
+	/**
+	 * Sets the list fields for the limits.
+	 * 
+	 * @param rate Field that contains the rate limits.
+	 * @param absolute Field that contains the absolute limits.
+	 */
 	public void setLimitLists(GridFieldManager rate, GridFieldManager absolute) {
 		try {
 			rateMgr.deleteAll();
@@ -601,71 +655,222 @@ public class HttpRequestDispatcher implements Runnable {
 		}
 	}
 	
+	/**
+	 * Sets the command to execute when the thread starts.
+	 * 
+	 * @param cmd Command to execute.
+	 * @param post_xml XML data to send along with the command.
+	 */
 	public void setCommand(int cmd, String post_xml) {
 		this.setCommand(cmd);
 		this.post_xml = post_xml;
 	}
 	
+	/**
+	 * Sets the command to execute when the thread starts.
+	 * 
+	 * @param cmd Command to execute.
+	 */
 	public void setCommand(int cmd) {
 		this.command = cmd;
 	}
 	
+	/**
+	 * Sets the screen to display results on.
+	 * 
+	 * @param screen The screen to display the response on.
+	 */
 	public void setScreen(MainScreen screen) {
 		this.screen = screen;
 	}
 	
+	/**
+	 * Sets the field manager for where the list of servers associated with the account will be displayed.
+	 * 
+	 * @param fmgr FieldManager that will have the servers listed on.
+	 */
 	public void setServerList(VerticalFieldManager fmgr) {
 		fmgr.deleteAll();
 		this.list = fmgr;
 	}
 	
+	/**
+	 * Sets the server ID to run operations against.
+	 * 
+	 * @param serverID ID of the server to run commands against.
+	 */
 	public void setServerID(String serverID) {
 		this.serverID = serverID;
 	}
 	
+	/**
+	 * Sets image group and field manager when getting image listings.
+	 * 
+	 * @param imageGroup Button Group that contains a list of available images.
+	 * @param imageMgr The FieldManager that contains the ButtonGroup.
+	 */
 	public void setImageGroup(RadioButtonGroup imageGroup, VerticalFieldManager imageMgr) {
 		this.imageGroup = imageGroup;
 		this.imageMgr = imageMgr;
 	}
 	
+	/**
+	 * Sets the flavor group and field manager when getting flavor listings.
+	 * 
+	 * @param flavorGroup Button Group that contains a list of available flavors.
+	 * @param flavorMgr The FieldManager that contains the ButtonGroup
+	 */
 	public void setFlavorGroup(RadioButtonGroup flavorGroup, VerticalFieldManager flavorMgr) {
 		this.flavorGroup = flavorGroup;
 		this.flavorMgr = flavorMgr;
 	}
 	
+	/**
+	 * String containing the XML to post to Rackspace.
+	 */
 	private String post_xml;
+	/**
+	 * FieldManager that contains the ButtonGroup choices for flavors.
+	 */
 	private VerticalFieldManager flavorMgr;
+	/**
+	 * FieldManager that contains the ButtonGroup choices for images.
+	 */
 	private VerticalFieldManager imageMgr;
+	/**
+	 * ButtonGroup that contains flavor choices.
+	 */
 	private RadioButtonGroup flavorGroup;
+	/**
+	 * ButtonGroup that contains image choices.
+	 */
 	private RadioButtonGroup imageGroup;
+	/**
+	 * FieldManager that holds the rate limit information.
+	 */
 	private GridFieldManager rateMgr;
+	/**
+	 * FieldManager that contains the absolute limit information.
+	 */
 	private GridFieldManager absoluteMgr;
+	/**
+	 * Server ID to perform actions against.
+	 */
 	private String serverID;
+	/**
+	 * 
+	 */
 	private VerticalFieldManager list;
+	/**
+	 * Request instance.
+	 */
 	static private HttpRequestDispatcher requestInstance = new HttpRequestDispatcher();
+	/**
+	 * The account user name.
+	 */
 	private String username = "";
-    private String apikey = "";
-    private final String API_URL = "https://auth.api.rackspacecloud.com/v1.0";
-    private String management_url;
-    private String storage_url;
-    private String cdn_url;
-    private String token;
-    private boolean authenticated = false;
-    private Document doc;
+    /**
+     * The account API key.
+     */
+	private String apikey = "";
+    /**
+     * API URL to run commands against.
+     */
+	private final String API_URL = "https://auth.api.rackspacecloud.com/v1.0";
+    /**
+     * The management URL to run server requests against. This is provided by Rackspace after being successfully authenticated.
+     */
+	private String management_url;
+    /**
+     * The storage URL to perform cloud file request against. This is provided by Rackspace after being successfully authenticated.
+     */
+	private String storage_url;
+    /**
+     * Content Delivery URL. This is provided by Rackspace after being successfully authenticated.
+     */
+	private String cdn_url;
+    /**
+     * Token given to the sessoin after successful authentication.
+     */
+	private String token;
+    /**
+     * Determines if authentication is needed or not.
+     */
+	private boolean authenticated = false;
+    /**
+     * Contains the XML response.
+     */
+	private Document doc;
+	/**
+	 * Screen Object to perform updates on.
+	 */
 	private MainScreen screen;
+	/**
+	 * Command that is to be executed.
+	 */
 	private int command;
+	/**
+	 * Authentication command.
+	 */
 	public static final int AUTHENTICATE = -1;
+	/**
+	 * List servers command.
+	 */
 	public static final int LIST_SERVERS = 1;
+	/**
+	 * List servers with details command. 
+	 */
 	public static final int SERVER_DETAILS = 2;
+	/**
+	 * Get limits command.
+	 */
 	public static final int GET_LIMITS = 3;
+	/**
+	 * List flavors command.
+	 */
 	public static final int LIST_FLAVORS = 4;
+	/**
+	 * List images command.
+	 */
 	public static final int LIST_IMAGES = 5;
+	/**
+	 * Create server command.
+	 */
 	public static final int CREATE_SERVER = 6;
+	/**
+	 * Delete server command.
+	 */
 	public static final int DELETE_SERVER = 7;
+	/**
+	 * Update server command.
+	 */
 	public static final int UPDATE_SERVER = 8;
+	/**
+	 * Reboot command.
+	 */
 	public static final int REBOOT = 9;
+	/**
+	 * Rebuild command.
+	 */
 	public static final int REBUILD = 10;
+	/**
+	 * Confirm resize command.
+	 */
 	public static final int CONFIRM_RESIZE = 11;
+	/**
+	 * Revert resize command.
+	 */
 	public static final int REVERT_RESIZE = 12;
+	/**
+	 * Resize server command.
+	 */
 	public static final int RESIZE_SERVER = 13;
+	/**
+	 * Schedule backup command.
+	 */
+	public static final int SCHEDULE_BACKUP = 14;
+	/**
+	 * Create image command.
+	 */
+	public static final int CREATE_IMAGE = 15;
 }
